@@ -1,7 +1,7 @@
 import sys
 import os
-from food_volume_estimation.food_segmentation.mrcnn.config import Config
-from food_volume_estimation.food_segmentation.mrcnn import (
+from food_segmentation.mrcnn.config import Config
+from food_segmentation.mrcnn import (
     model as modellib,
     utils)
 
@@ -66,8 +66,8 @@ class FoodSegmentator():
             image_paths: List of paths to images to detect food in.
         """
         import cv2
-        from food_volume_estimation.food_segmentation.mrcnn import visualize
-        from food_volume_estimation.food_segmentation.mrcnn.visualize import display_images
+        from food_segmentation.mrcnn import visualize
+        from food_segmentation.mrcnn.visualize import display_images
 
         for path in image_paths:
             class_names = ['bg'] + clusters

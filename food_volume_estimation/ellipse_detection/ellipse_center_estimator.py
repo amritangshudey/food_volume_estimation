@@ -1,8 +1,8 @@
 import numpy as np
 import cv2
 
-from food_volume_estimation.ellipse_detection.segment import Segment
-from food_volume_estimation.ellipse_detection.segment_pair import SegmentPair
+from ellipse_detection.segment import Segment
+from ellipse_detection.segment_pair import SegmentPair
 
 
 class EllipseCenterEstimator(object):

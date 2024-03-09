@@ -61,8 +61,8 @@ class_id_map = {c: i+1 for i,c in enumerate(clusters)}
 
 # Mask RCNN Configuration
 ROOT_DIR = os.path.abspath('../../')
-from food_volume_estimation.food_segmentation.mrcnn.config import Config
-from food_volume_estimation.food_segmentation.mrcnn import (
+from food_segmentation.mrcnn.config import Config
+from food_segmentation.mrcnn import (
     model as modellib, 
     utils)
 COCO_WEIGHTS_PATH = os.path.join(ROOT_DIR, '/models/mask_rcnn_coco.h5')
@@ -264,9 +264,9 @@ def infer(model, image_paths, save_dir=None):
         image_paths: List of paths to images to detect food in.
         save_dir: Directory to save results at.
     """
-    from food_volume_estimation.food_segmentation.mrcnn import visualize
-    from food_volume_estimation.food_segmentation.mrcnn.visualize import display_images
-    from food_volume_estimation.food_segmentation.mrcnn.model import log
+    from food_segmentation.mrcnn import visualize
+    from food_segmentation.mrcnn.visualize import display_images
+    from food_segmentation.mrcnn.model import log
 
     for path in image_paths:
         class_names = ['bg'] + clusters
@@ -306,9 +306,9 @@ def eval_on_set(model, dataset_dir, subset, annotations_file, n_evals=3):
         subset: Dataset subset to draw samples from.
         n_evals: Number of examples to evaluate.
     """
-    from food_volume_estimation.food_segmentation.mrcnn import visualize
-    from food_volume_estimation.food_segmentation.mrcnn.visualize import display_images
-    from food_volume_estimation.food_segmentation.mrcnn.model import log
+    from food_segmentation.mrcnn import visualize
+    from food_segmentation.mrcnn.visualize import display_images
+    from food_segmentation.mrcnn.model import log
 
     # Evaluation set
     dataset = FoodDataset()

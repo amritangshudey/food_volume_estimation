@@ -1,10 +1,10 @@
 import numpy as np
 import cv2
-from food_volume_estimation.ellipse_detection.ellipse import Ellipse
-from food_volume_estimation.ellipse_detection.segment_detector import SegmentDetector
-from food_volume_estimation.ellipse_detection.ellipse_candidate_maker import EllipseCandidateMaker
-from food_volume_estimation.ellipse_detection.ellipse_estimator import EllipseEstimator
-from food_volume_estimation.ellipse_detection.ellipse_merger import EllipseMerger
+from ellipse_detection.ellipse import Ellipse
+from ellipse_detection.segment_detector import SegmentDetector
+from ellipse_detection.ellipse_candidate_maker import EllipseCandidateMaker
+from ellipse_detection.ellipse_estimator import EllipseEstimator
+from ellipse_detection.ellipse_merger import EllipseMerger
 
 
 class EllipseDetector(object):

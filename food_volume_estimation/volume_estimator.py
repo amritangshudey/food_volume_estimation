@@ -10,11 +10,11 @@ from keras.models import Model, model_from_json
 import keras.backend as K
 from fuzzywuzzy import fuzz, process 
 import matplotlib.pyplot as plt
-from food_volume_estimation.depth_estimation.custom_modules import *
-from food_volume_estimation.depth_estimation.project import *
-from food_volume_estimation.food_segmentation.food_segmentator import FoodSegmentator
-from food_volume_estimation.ellipse_detection.ellipse_detector import EllipseDetector
-from food_volume_estimation.point_cloud_utils import *
+from depth_estimation.custom_modules import *
+from depth_estimation.project import *
+from food_segmentation.food_segmentator import FoodSegmentator
+from ellipse_detection.ellipse_detector import EllipseDetector
+from point_cloud_utils import *
 
 
 class DensityDatabase():
