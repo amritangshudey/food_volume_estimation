@@ -29,11 +29,11 @@ class DensityDatabase():
         if os.path.exists(db_path):
             # Read density database from excel file
             self.density_database = pd.read_excel(
-                db_path, sheet_name=0, usecols=[0, 1])
+                db_path, sheet_name=0, usecols=[0, 1],engine='openpyxl')
         else:
             # Read density database from Google Sheets URL
             sheet = 'Sheet1'
-            url = 'https://docs.google.com/spreadsheets/d/{0}/gviz/tq?tqx=out:csv&sheet={1}'.format(
+            url = 'data/density_DB_v2_0_final-1__1_.xlsx'.format(
                 db_path, sheet)
             self.density_database = pd.read_csv(url, usecols=[0, 1],
                                                 header=None)
