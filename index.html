@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Volume Estimation</title>
+</head>
+<body>
+    <h1>Food Volume Estimation</h1>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <label for="img">Image:</label>
+        <input type="file" id="img" name="img" accept="image/*" required><br><br>
+
+        <label for="plate_diameter">Plate Diameter:</label>
+        <input type="number" id="plate_diameter" name="plate_diameter" step="0.01" required><br><br>
+
+        <label for="food_type">Food Type:</label>
+        <input type="text" id="food_type" name="food_type" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
