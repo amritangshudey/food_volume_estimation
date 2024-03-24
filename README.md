@@ -17,18 +17,36 @@ The food input image is passed through the depth and segmentation networks to pr
 ![Volume Estimation](/assets/readme_assets/vol_est.png)
 
 
+#### Classification
+A resnet-34 model is used pretrained on the Imagenet dataset and imported from pytorch and fine tuned in the food-11 dataset(https://www.kaggle.com/datasets/trolukovich/food11-image-dataset) and had an accuracy of around 90% on the finetuned model.
+
+## Create an environment in conda
+
+```
+conda create --name (nameOfTheEnvireonment) python=3.6 // since we need python 3.6 for compatibility
+conda activate (nameOfTHeEnvironemnt) // to activate the environment
+
+```
+
 ## Requirements
 The code is written and tested in ```python 3.6 ```. The required pip packages for running the volume estimation script are:
 ```
 numpy==1.16.3
-pandas=0.24.2
+pandas==0.24.2
 opencv-python==4.1.0.25
 scipy==1.2.1
-scikit-learn==0.21.1
 tensorflow==1.13.1
 keras==2.2.4
-h5py==2.9.0
+scikit-learn==0.21.1
+scikit-image==0.16.2
 matplotlib==3.0.3
+pyntcloud==0.1.2
+pythreejs==2.1.1
+IPython
+Flask==1.1.1
+fuzzywuzzy==0.18.0
+h5py==2.10.0
+
 ```
 To install this project, first make sure you have all the required packages
 ```
@@ -124,6 +142,7 @@ If you wish to visualize the volume estimation pipeline, run the example noteboo
 
 
 ## Models
+https://drive.google.com/drive/folders/1qpTIRNVIm6Z5_w346EjJ0NZ_wOj651YE?usp=sharing (complete link)
 Download links for the pre-trained models:
 - Depth prediction model:
   - Architecture: https://drive.google.com/open?id=1t-nlUvbtD6ungcj0I_BweubRnbUogjVG
