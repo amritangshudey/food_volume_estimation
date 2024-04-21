@@ -15,6 +15,8 @@ from depth_estimation.project import *
 from food_segmentation.food_segmentator import FoodSegmentator
 from ellipse_detection.ellipse_detector import EllipseDetector
 from point_cloud_utils import *
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
 
 
 class DensityDatabase():
@@ -111,6 +113,9 @@ class VolumeEstimator():
             # Plate adjustment relaxation parameter
             self.relax_param = self.args.relaxation_param
 
+            #load classifier
+            self.loaded_model = None
+
             # If given initialize food density database 
             if self.args.density_db is not None:
                 self.density_db = DensityDatabase(self.args.density_db)
@@ -191,6 +196,71 @@ class VolumeEstimator():
         
 
         return args
+    
+
+
+
+
+
+
+    
+    def predict_class(self,model, img_arr):
+        # Load and preprocess the image
+        class_names = ['Bread', 'Dairy product', 'Dessert', 'Egg', 'Fried food', 'Meat', 'Noodles/Pasta', 'Rice', 'Seafood', 'Soup', 'Vegetable/Fruit']
+        # img = image.load_img(img_path, target_size=(224, 224))
+        # img_array = image.img_to_array(img)
+        img_array = img_arr
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array /= 255.0  # Rescale pixel values to [0, 1]
+        
+        # Predict the class
+        prediction = model.predict(img_array)
+        
+        # Get the predicted class label
+        predicted_class = np.argmax(prediction)
+        
+        # Get the class name from the class_names list
+        class_name = class_names[predicted_class]
+        
+        return class_name
+
+    def calculate_calories(self,predicted_class, total_volume):
+        # Define the densities corresponding to each class name
+        class_densities = {
+            'Bread': 0.75,
+            'Dairy product': 0.6,
+            'Dessert': 0.8,
+            'Egg': 0.65,
+            'Fried food': 0.85,
+            'Meat': 0.9,
+            'Noodles/Pasta': 0.7,
+            'Rice': 0.72,
+            'Seafood': 0.88,
+            'Soup': 0.78,
+            'Vegetable/Fruit': 0.5
+        }
+
+        # Dictionary mapping class names to calories per 100g
+        calories_per_100g = {
+            'Bread': 265,
+            'Dairy product': 150,
+            'Dessert': 250,
+            'Egg': 155,
+            'Fried food': 330,
+            'Meat': 250,
+            'Noodles/Pasta': 138,
+            'Rice': 130,
+            'Seafood': 85,
+            'Soup': 30,
+            'Vegetable/Fruit': 30
+        }
+        # Calculate the total weight based on density and total volume
+        total_weight = total_volume * class_densities[predicted_class] * 1000
+        
+        # Calculate the calories based on total weight
+        calories = (total_weight / 100) * calories_per_100g[predicted_class]
+        
+        return calories
 
     def estimate_volume(self, input_image, fov=70,  plate_diameter_prior=0.3,
             plot_results=False, plots_directory=None):
@@ -198,7 +268,7 @@ class VolumeEstimator():
 
         Inputs:
             input_image: Path to input image or image array.
-            fov: Camera Field of View.
+            fov: Camera Field of View.  
             plate_diameter_prior: Expected plate diameter.
             plot_results: Result plotting flag.
             plots_directory: Directory to save plots at or None.
@@ -387,14 +457,31 @@ class VolumeEstimator():
                 estimated_volume, simplices = pc_to_volume(volume_points)
                 print('[*] Estimated volume:', estimated_volume * 1000, 'L')
 
+
+
+
+
+
+                #classify the food
+                print(input_image)
+                print(masks_array[:,:,k])
+               
+                predicted_class = self.predict_class(self.loaded_model, object_img)
+                total_calories = self.calculate_calories(predicted_class, estimated_volume)
+                print("Predicted class:", predicted_class)
+                print("Total calories in predicted class:", total_calories)
+
+
+
+
                 # Create figure of input image and predicted 
                 # plate contour, segmentation mask and depth map
                 pretty_plotting([img, plate_contour, depth, object_img], 
                                 (2,2),
                                 ['Input Image', 'Plate Contour', 'Depth', 
                                  'Object Mask'],
-                                'Estimated Volume: {:.3f} L'.format(
-                                estimated_volume * 1000.0))
+                                'Food Detected is {} and Estimated Calories: {:.3f} L'.format(
+                                predicted_class, total_calories))
 
                 # Plot and save figure
                 if plot_results:

@@ -8,6 +8,7 @@ from food_volume_estimation.depth_estimation.custom_modules import *
 from food_volume_estimation.food_segmentation.food_segmentator import FoodSegmentator
 from flask import Flask, request, jsonify, make_response, abort
 import base64
+import traceback 
 
 
 app = Flask(__name__)
@@ -76,24 +77,38 @@ def volume_estimation():
     """
     # Decode incoming byte stream to get an image
     try:
-        content = request.get_json()
-        img_encoded = content['img']
-        img_byte_string = ' '.join([str(x) for x in img_encoded]) # If in byteArray
-        #img_byte_string = base64.b64decode(img_encoded) # Decode if in base64
-        np_img = np.fromstring(img_byte_string, np.int8, sep=' ')
-        img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+        # Retrieve the FileStorage object for the uploaded image
+        image_file = request.files['img']
+
+        # Convert the uploaded file object to bytes
+        image_bytes = image_file.read()
+
+        # Convert the bytes to a numpy array
+        image_array = np.frombuffer(image_bytes, np.uint8)
+
+        # Read the image using OpenCV
+        img = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+
+        print(img)
+   
+        
+  
+        
     except Exception as e:
+        print("An error occurred:", e)
+        traceback.print_exc()
         abort(406)
 
     # Get food type
     try:
-        food_type = content['food_type']
+        food_type = request.form['food_type']
     except Exception as e:
+        print(e)
         abort(406)
 
     # Get expected plate diameter from form data or set to 0 and ignore
     try:
-        plate_diameter = float(content['plate_diameter'])
+        plate_diameter = float(request.form['plate_diameter'])
     except Exception as e:
         plate_diameter = 0
 
@@ -115,6 +130,7 @@ def volume_estimation():
     return_vals = {
         'food_type_match': db_entry[0],
         'weight': weight
+        
     }
     return make_response(jsonify(return_vals), 200)
 
@@ -147,3 +163,5 @@ if __name__ == '__main__':
                           args.density_db_source)
     app.run(host='0.0.0.0')
 
+
+# python food_volume_estimation_app.py --depth_model_architecture models/fine_tune_food_videos/monovideo_fine_tune_food_videos.json --depth_model_weights models/fine_tune_food_videos/monovideo_fine_tune_food_videos.h5 --segmentation_model_weights models/segmentation/mask_rcnn_food_segmentation.h5 --density_db_source data/density_DB_v2_0_final-1__1_.xlsx
