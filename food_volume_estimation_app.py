@@ -76,25 +76,28 @@ def volume_estimation():
     """
     # Decode incoming byte stream to get an image
     try:
-        content = request.get_json()
-        img_encoded = content['img']
-        img_byte_string = ' '.join([str(x) for x in img_encoded]) # If in byteArray
-        #img_byte_string = base64.b64decode(img_encoded) # Decode if in base64
-        np_img = np.fromstring(img_byte_string, np.int8, sep=' ')
-        img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+        img_encoded = request.files['img'].read()  # Read the raw bytes of the image file
+        np_arr = np.frombuffer(img_encoded, np.uint8)  # Convert the bytes to a NumPy array
+        img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)  # Decode the image
+   
     except Exception as e:
+        print(e)
         abort(406)
 
     # Get food type
-    try:
-        food_type = content['food_type']
-    except Exception as e:
-        abort(406)
+    # try:
+    #     food_type = request.form.get('food_type')
+       
+    # except Exception as e:
+    #     print(e)
+    #     abort(406)
 
     # Get expected plate diameter from form data or set to 0 and ignore
     try:
-        plate_diameter = float(content['plate_diameter'])
+        plate_diameter = float(request.form.get('plate_diameter'))
+     
     except Exception as e:
+        print(e)
         plate_diameter = 0
 
     # Estimate volumes
@@ -103,18 +106,21 @@ def volume_estimation():
             plate_diameter_prior=plate_diameter)
     # Convert to mL
     volumes = [v * 1e6 for v in volumes]
+
+    
     
     # Convert volumes to weight - assuming a single food type
-    db_entry = density_db.query(food_type)
-    density = db_entry[1]
-    weight = 0
-    for v in volumes:
-        weight += v * density
+    # db_entry = density_db.query(food_type)
+    # density = db_entry[1]
+    # weight = 0
+    # for v in volumes:
+    #     weight += v * density
 
     # Return values
     return_vals = {
-        'food_type_match': db_entry[0],
-        'weight': weight
+        # 'food_type_match': db_entry[0],
+        # 'weight': weight
+        'vol': volumes
     }
     return make_response(jsonify(return_vals), 200)
 
